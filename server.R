@@ -88,7 +88,7 @@ server <- function(input, output) {
     scale_fill_continuous(
       low = "#56B1F7", high = "#132B43",na.value = "red",
       guide=guide_colorbar(barwidth = 2,barheight = 10))+
-    labs(fill = "Density")})
+    labs(title = paste("NY County wise",input$Map_Brand,"cars count for the year",input$Map_Year),fill = "Density")})
   
   output$County_Map_Rebate <- renderPlotly({map <- NY_County_map + 
     geom_polygon(data = Map_County_Rebate() , aes(fill = Value,label = County), color = "black") +
