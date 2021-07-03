@@ -5,7 +5,7 @@ ui <- fluidPage(
     dashboardSidebar(sidebarMenu(
       menuItem("Car Models and OwnerShip",tabName="carmodels",icon=icon("car")),
       menuItem("Emissions",tabName = "Emissions",icon = icon("gas-pump")),
-      menuItem("Rebate Amount",tabName="RebateAmount",icon=icon("money")),
+      menuItem("Rebate Amount Brand",tabName="RebateAmount",icon=icon("money")),
       menuItem("Car Density",tabName = "CarDenisty",icon = icon("globe")),
       menuItem("Rebate Amount County",tabName = "RebateCounty",icon=icon("money"))
     )),
