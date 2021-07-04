@@ -86,7 +86,7 @@ server <- function(input, output) {
   
   output$barplot_Rebate <- renderPlotly({barplot <- ggplot(data= Rebate_df(), aes(x=Model, y=count)) +
     geom_bar(fill="brown2",stat="identity")+facet_wrap(~EV.Type,scales="free_x")+
-    ggtitle("Rebate Amount of",input$R_Brand,"Cars For The Year",input$R_Year)+
+    ggtitle(paste("Rebate Amount of",input$R_Brand,"Cars For The Year",input$R_Year))+
     theme(plot.title = element_text(hjust = 0.5))+
     labs(x= paste(input$R_Brand,input$R_Year),y=("USD"))
   barplot <- ggplotly(barplot)
