@@ -16,8 +16,9 @@ ui <- fluidPage(
                 fluidRow(
                   box(column(width=6,selectInput("Brand","Brand",choices=sort(unique(EV$Make))))),
                   box(column(width= 6, offset = 1,radioButtons("Year","Year",sort(unique(EV$Year))))),
-                  box(width=6,collapsible=TRUE,uiOutput(outputId = "UIout1")),
-                  box(width=6,collapsible=TRUE,collapsed = TRUE,uiOutput(outputId = "UIout2"))
+                  box(width=6,collapsible=TRUE,uiOutput(outputId = "UIout2")),
+                  box(width=6,collapsible=TRUE,collapsed = TRUE,uiOutput(outputId = "UIout1"))
+                  
                 )),
         tabItem(tabName = "Emissions",
                 fluidRow(

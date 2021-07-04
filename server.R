@@ -53,6 +53,8 @@ server <- function(input, output) {
     barplot <- ggplot(data = brands_df() ) + geom_bar(mapping = aes(x = Model, fill = Transaction.Type), position = "dodge")+
       facet_wrap(~EV.Type,scales="free_x")+
       labs(x= paste(input$Brand,input$Year),y="Total Count",fill="OwnerShip")+
+      ggtitle(paste(input$Brand,"Models and EV Type","For The",input$Year))+
+      theme(plot.title = element_text(hjust = 0.5))+
       theme(axis.text.x =element_text(angle =45,hjust = 1))
     #barplot <- ggplotly(barplot)
     barplot
@@ -60,17 +62,23 @@ server <- function(input, output) {
   
   output$piechart <- renderPlot({ggplot(counts_df(), aes(x="", y=count, fill=Transaction.Type)) + geom_bar(stat="identity", width=1)+ coord_polar(theta = "y")+ 
       geom_text(aes(label = paste0(round(prop), "%")), position = position_stack(vjust = 0.5))+
+      ggtitle(paste(input$Brand,"Ownership Style Percentages For The",input$Year))+
+      theme(plot.title = element_text(hjust = 0.5))+
       labs(fill="OwnerShip")+
       theme_void()})
   
   output$scatterplot_Emissions <- renderPlotly({if(input$Emissions_Choice == "CO2"){
     scatterplot<-ggplot(data = CO2_df(), mapping = aes(label = Model)) + 
       geom_point(mapping = aes(x = Make, y = Emissions , color = EV.Type))+
-      labs(x=paste("Brands",input$Emissions_Year),y=paste(input$Emissions_Choice,"Reduction MTco2e"))+
+      ggtitle(paste("Reduction of Metric tons of CO2 For The Year",input$Emissions_Year))+
+      theme(plot.title = element_text(hjust = 0.5))+
+      labs(x=paste("Brands",input$Emissions_Year),y=paste(input$Emissions_Choice,"MTCO2e"))+
       theme(axis.text.x =element_text(angle =45,hjust = 1))
   } else {scatterplot<-ggplot(data = Petrol_df(), mapping = aes(label = Model)) + 
     geom_point(mapping = aes(x = Make, y = Emissions , color = EV.Type))+
-    labs(x=paste("Brands",input$Emissions_Year),y=paste(input$Emissions_Choice,"Reduction Gallons"))+
+    ggtitle(paste("Usage Reduction of Petrol in Gallons For The Year",input$Emissions_Year))+
+    theme(plot.title = element_text(hjust = 0.5))+
+    labs(x=paste("Brands",input$Emissions_Year),y=paste(input$Emissions_Choice,"(Gallons)"))+
     theme(axis.text.x =element_text(angle =45,hjust = 1))}
     scatterplot <- ggplotly(scatterplot)
     scatterplot})
@@ -78,6 +86,8 @@ server <- function(input, output) {
   
   output$barplot_Rebate <- renderPlotly({barplot <- ggplot(data= Rebate_df(), aes(x=Model, y=count)) +
     geom_bar(fill="brown2",stat="identity")+facet_wrap(~EV.Type,scales="free_x")+
+    ggtitle("Rebate Amount of",input$R_Brand,"Cars For The Year",input$R_Year)+
+    theme(plot.title = element_text(hjust = 0.5))+
     labs(x= paste(input$R_Brand,input$R_Year),y=("USD"))
   barplot <- ggplotly(barplot)
   barplot})
@@ -89,6 +99,7 @@ server <- function(input, output) {
       low = "#56B1F7", high = "#132B43",na.value = "red",
       guide=guide_colorbar(barwidth = 2,barheight = 10))+
     ggtitle(paste("NY County wise",input$Map_Brand,"cars count for the year",input$Map_Year))+
+    theme(plot.title = element_text(hjust = 0.5))+
     labs(fill = "Density")})
   
   output$County_Map_Rebate <- renderPlotly({map <- NY_County_map + 
@@ -98,6 +109,7 @@ server <- function(input, output) {
       low = "#56B1F7", high = "#132B43",na.value = "red",
       guide=guide_colorbar(barwidth = 2,barheight = 10))+
     ggtitle(paste("NY County Wise",input$County_R_Brand,"Cars Total Rebate Amount For The Year",input$County_R_Year))+
+    theme(plot.title = element_text(hjust = 0.5))+
     labs(fill = "USD")})
   
   output$UIout1 <- renderUI({
@@ -141,7 +153,13 @@ server <- function(input, output) {
   })
   
   output$UIout6 <- renderUI({
-    plotlyOutput("County_Map_Rebate")
+    
+    if(nrow(County_Rebate_df()) == 0){
+      p(strong(paste("No"),input$County_R_Brand, paste("Cars for the year"),input$County_R_Year))
+    } else {
+      plotlyOutput("County_Map_Rebate")
+    }
+    
   })
 }
 
