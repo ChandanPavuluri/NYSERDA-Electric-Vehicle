@@ -4,8 +4,8 @@ ui <- fluidPage(
     dashboardHeader(title="Electric vehicles Newyork"),
     dashboardSidebar(sidebarMenu(
       menuItem("Car Models and OwnerShip",tabName="carmodels",icon=icon("car")),
-      menuItem("Emissions",tabName = "Emissions",icon = icon("gas-pump")),
-      menuItem("Rebate Amount Brand",tabName="RebateAmount",icon=icon("money")),
+      menuItem("Emissions(Brand)",tabName = "Emissions",icon = icon("gas-pump")),
+      menuItem("Emissions and Rebate(Year)",tabName="EmissionsRebate",icon=icon("chart-line")),
       menuItem("Car Density",tabName = "CarDenisty",icon = icon("globe")),
       menuItem("Rebate Amount County",tabName = "RebateCounty",icon=icon("money"))
     )),
@@ -26,11 +26,9 @@ ui <- fluidPage(
                   box(column(width= 6, offset = 1,radioButtons("Emissions_Choice","Emissions",choices=c("CO2","Petrol")))),
                   box(width = 12,collapsible=TRUE,uiOutput(outputId = "UIout3"))
                 )),
-        tabItem(tabName = "RebateAmount",
+        tabItem(tabName = "EmissionsRebate",
                 fluidRow(
-                  box(column(width=4,selectInput("R_Brand","Brand",choices=sort(unique(EV$Make))))),
-                  #box(column(width=4,selectInput("R_County","County",choices=sort(unique(EV$County))))),
-                  box(column(width=4,offset =1,radioButtons("R_Year","Year",sort(unique(EV$Year))))),
+                  box(column(width= 6,radioButtons("E_R","Emissions_Rebate",choices=c("CO2","Petrol","Rebate_Amount")))),
                   box(width=12,collapsible=TRUE, uiOutput(outputId = "UIout4"))
                 )),
         tabItem(tabName = "CarDenisty",

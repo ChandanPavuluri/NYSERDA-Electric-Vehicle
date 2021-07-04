@@ -5,6 +5,7 @@ library(readr)
 library(tidyverse)
 library(ggplot2)
 library(plotly)
+library(lubridate)
 library(maps)
 library(mapproj)
 
@@ -12,13 +13,18 @@ library(mapproj)
 EV <- read.csv("EV.csv",header = T,na.strings=c("","NA"))
 
 # Removing the Date and Month from the date
-EV$Submitted.Date<- substring(EV$Submitted.Date, 7)
+EV$Year<- substring(EV$Submitted.Date, 7)
 
 # Removing the First column()
 EV <- EV[,-1]
 
 # Changing Column Names
-colnames(EV)[1] <- "Year"
+colnames(EV)[1] <- "Date"
+
+EV$Date<-mdy(EV$Date)
+
+EV$Month_Yr <- format(as.Date(EV$Date), "%Y-%m")
+
 
 # Checking for NA Values 
 colnames(EV)[colSums(is.na(EV)) > 0]
@@ -40,6 +46,7 @@ EV$County <- tolower(EV$County)
 # Changing column names of 8 and 9 Columns
 colnames(EV)[8] <- "CO2"
 colnames(EV)[9] <- "Petrol"
+colnames(EV)[10] <- "Rebate_Amount"
 
 # Loading the New york County wise Map data
 states <- map_data("state")
@@ -61,3 +68,8 @@ NY_County_map <- ggplot(data = ny_df, mapping = aes(x = long, y = lat, group = g
     panel.background = element_blank(),
     axis.title = element_blank()
   )
+
+EV%>%
+  group_by(Month_Yr)%>%
+  summarise(CO2_reduced_MetricTons = sum(CO2))%>%
+  mutate(Year = as.Date(paste(Month_Yr,"-28",sep="")))

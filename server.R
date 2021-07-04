@@ -25,12 +25,26 @@ server <- function(input, output) {
       arrange(desc(Emissions))%>%
       filter(Year == input$Emissions_Year)})
   
+  Line_CO2_df <- reactive({EV%>%
+      group_by(Month_Yr)%>%
+      summarise(CO2_reduced_MetricTons = sum(CO2))%>%
+    mutate(Year = as.Date(paste(Month_Yr,"-28",sep="")))
+  })
   
-  Rebate_df <- reactive({EV%>%
-      select(Make,Model,Year,County,EV.Type,Rebate.Amount..USD.)%>%
-      filter(Year == input$R_Year,Make == input$R_Brand)%>%
-      group_by(Model,EV.Type)%>%
-      summarise(count = sum(Rebate.Amount..USD.))})
+  Line_Petrol_df <- reactive({df <- EV%>%
+      group_by(Month_Yr)%>%
+      summarise(Petrol_reduced_Gallons = sum(Petrol))%>%
+    mutate(Year = as.Date(paste(Month_Yr,"-28",sep="")))
+  })
+  
+
+  
+  Line_Rebate_df<- reactive({df <- EV%>%
+    group_by(Month_Yr)%>%
+    summarise(TotalUSD = sum(Rebate_Amount))%>%
+    mutate(Year = as.Date(paste(Month_Yr,"-28",sep="")))
+  })
+  
   
   Map_df <- reactive({EV %>%
       group_by(Make,Year,County)%>%
@@ -40,9 +54,9 @@ server <- function(input, output) {
   Map_County <- reactive({inner_join(ny_county, Map_df(), by = "County")})
   
   County_Rebate_df <- reactive({EV%>%
-      group_by(Make,Year,County,Rebate.Amount..USD.)%>%
+      group_by(Make,Year,County)%>%
       filter(Year == input$County_R_Year,Make == input$County_R_Brand)%>%
-      summarise(Value = sum(Rebate.Amount..USD.))})
+      summarise(Value = sum(Rebate_Amount))})
   
   Map_County_Rebate <- reactive({inner_join(ny_county, County_Rebate_df(), by = "County")})
   
@@ -84,13 +98,31 @@ server <- function(input, output) {
     scatterplot})
   
   
-  output$barplot_Rebate <- renderPlotly({barplot <- ggplot(data= Rebate_df(), aes(x=Model, y=count)) +
-    geom_bar(fill="brown2",stat="identity")+facet_wrap(~EV.Type,scales="free_x")+
-    ggtitle(paste("Rebate Amount of",input$R_Brand,"Cars For The Year",input$R_Year))+
-    theme(plot.title = element_text(hjust = 0.5))+
-    labs(x= paste(input$R_Brand,input$R_Year),y=("USD"))
-  barplot <- ggplotly(barplot)
-  barplot})
+  output$Linechart <- renderPlotly({Linechart <- if(input$E_R == "CO2"){
+    linechart <- ggplot(data=Line_CO2_df(), aes(x=Year, y=CO2_reduced_MetricTons)) +
+      geom_line()+
+      scale_x_date(date_labels = '%Y')+
+      ggtitle("Amount of CO2 Reduced by EVs in New York State")+
+      theme(plot.title = element_text(hjust = 0.5))+
+      theme_bw()
+  } else if(input$E_R == "Petrol"){
+    linechart <- ggplot(data=Line_Petrol_df(), aes(x=Year, y=Petrol_reduced_Gallons)) +
+      geom_line()+
+      scale_x_date(date_labels = '%Y')+ 
+      ggtitle("Amount of Petrol Usage Reduced by EVs in New York State")+
+      theme(plot.title = element_text(hjust = 0.5))+
+      theme_bw()
+  }else {
+    linechart <- ggplot(data=Line_Rebate_df(), aes(x=Year, y= TotalUSD)) +
+      geom_line()+
+      scale_x_date(date_labels = '%Y')+
+      ggtitle("Rebate Amount Provided by Government for Evs in New York State")+
+      theme(plot.title = element_text(hjust = 0.5))+
+      theme_bw()
+  }
+  linechart <- ggplotly(linechart)
+  linechart
+    })
   
   output$County_Map <- renderPlotly({map <- NY_County_map + 
     geom_polygon(data = Map_County() , aes(fill = count,label = County), color = "black") +
@@ -134,12 +166,7 @@ server <- function(input, output) {
   
   
   output$UIout4 <- renderUI({
-    if(nrow(Rebate_df()) == 0){
-      p(strong(paste("No"),input$R_Brand, paste("Cars for the year"),input$R_Year))
-    } else {
-      plotlyOutput("barplot_Rebate")
-    }
-    
+    plotlyOutput("Linechart")
   })
   
   output$UIout5 <- renderUI({
