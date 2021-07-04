@@ -8,26 +8,40 @@ library(plotly)
 library(maps)
 library(mapproj)
 
-# Load data
+# Loading the data and specifying empty places change to NA
 EV <- read.csv("EV.csv",header = T,na.strings=c("","NA"))
+
+# Removing the Date and Month from the date
 EV$Submitted.Date<- substring(EV$Submitted.Date, 7)
+
+# Removing the First column()
 EV <- EV[,-1]
+
+# Changing Column Names
 colnames(EV)[1] <- "Year"
+
+# Checking for NA Values 
 colnames(EV)[colSums(is.na(EV)) > 0]
+
+# Filling the NA values of County through Zip from other columns
 EV<-EV %>%
   group_by(ZIP) %>% 
   fill(County, .direction = "downup")
 
+# Dropping any other NA values from other columns
 EV<- EV %>% drop_na()
 
+# Making sure there are No NA Values 
 colnames(EV)[colSums(is.na(EV)) > 0]
 
+# Converting the County names to lower case
 EV$County <- tolower(EV$County)
 
+# Changing column names of 8 and 9 Columns
 colnames(EV)[8] <- "CO2"
 colnames(EV)[9] <- "Petrol"
 
-
+# Loading the New york County wise Map data
 states <- map_data("state")
 ny_df <- subset(states, region == "new york")
 counties <- map_data("county")
