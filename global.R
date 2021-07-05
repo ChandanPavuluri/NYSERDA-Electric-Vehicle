@@ -48,6 +48,8 @@ colnames(EV)[8] <- "CO2"
 colnames(EV)[9] <- "Petrol"
 colnames(EV)[10] <- "Rebate_Amount"
 
+EV$Name <- paste(EV$Make, "-", EV$Model)
+
 
 # Loading the New york County wise Map data
 states <- map_data("state")
@@ -71,5 +73,4 @@ NY_County_map <- ggplot(data = ny_df, mapping = aes(x = long, y = lat, group = g
   )
 
 
-
-
+  

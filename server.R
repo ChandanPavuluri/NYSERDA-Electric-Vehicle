@@ -72,6 +72,25 @@ server <- function(input, output) {
     
   })
   
+  Top5_df <- reactive({EV%>%
+      filter(Year == input$Top5_Year)%>%
+      group_by(Name,EV.Type)%>%
+      summarise(Total = n())%>%
+      arrange(desc(Total))%>%
+      filter(EV.Type == input$Top5_EVtype)%>%
+      ungroup()%>%
+      top_n(5)
+  })
+  
+  Top5_PBEV_df <- reactive({EV%>%
+    filter(Year == input$Top5_Year)%>%
+    group_by(Name,EV.Type)%>%
+    summarise(Total = n())%>%
+    arrange(desc(Total))%>%
+    ungroup()%>%
+    top_n(5)
+  })
+  
   # Creating barplot for brands and year
   output$barplot <- renderPlot({
     barplot <- ggplot(data = brands_df() ) + geom_bar(mapping = aes(x = Model, fill = Transaction.Type), position = "dodge")+
@@ -170,6 +189,27 @@ server <- function(input, output) {
   Rebate_pie
   })
   
+  output$Top5_barchart <- renderPlot({ if(input$Top5_EVtype == "PHEV & BEV"){
+    ggplot(Top5_PBEV_df(), aes(x = reorder(Name,Total), y=Total,fill=EV.Type)) +
+      geom_bar(stat='identity') +
+      coord_flip()+
+      labs(x="Cars",y="Count")
+    
+  } else if (input$Top5_EVtype == "PHEV") {
+    ggplot(Top5_df(), aes(x = reorder(Name,Total), y=Total)) +
+      geom_bar(stat='identity',fill="#00BFC4") +
+      coord_flip()+
+      labs(x="Cars",y="Count")
+  }
+    else {
+      ggplot(Top5_df(), aes(x = reorder(Name,Total), y=Total)) +
+        geom_bar(stat='identity',fill="#F8766D") +
+        coord_flip()+
+        labs(x="Cars",y="Count")
+    }
+    
+  })
+  
   output$UIout1 <- renderUI({
     if(nrow(brands_df()) == 0){
       p(strong(paste("No"),input$Brand, paste("Cars for the year"),input$Year))
@@ -232,6 +272,12 @@ server <- function(input, output) {
     }
     
   })
+  
+  output$UIout9 <- renderUI({
+    plotOutput("Top5_barchart")
+  })
+  
+  
 }
 
 

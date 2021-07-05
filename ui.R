@@ -8,7 +8,8 @@ ui <- fluidPage(
       menuItem("Emissions(Brand)",tabName = "Emissions",icon = icon("gas-pump")),
       menuItem("Emissions and Rebate(Year)",tabName="EmissionsRebate",icon=icon("chart-line")),
       menuItem("Rebate",tabName = "RebateAmount",icon= icon("money")),
-      menuItem("Rebate Amount County",tabName = "RebateCounty",icon=icon("globe"))
+      menuItem("Rebate Amount County",tabName = "RebateCounty",icon=icon("globe")),
+      menuItem("Top 5 Cars", tabName = "Top5",icon=icon("trophy"))
     )),
     
     dashboardBody(
@@ -51,7 +52,13 @@ ui <- fluidPage(
                   box(width=6,collapsible=TRUE,uiOutput(outputId = "UIout7")),
                   box(width=6,collapsible=TRUE,uiOutput(outputId = "UIout8"))
                   
-                ))
+                )),
+        tabItem(tabName = "Top5",
+                fluidRow(
+                  box(column(width=6,selectInput("Top5_Year","Year",choices=sort(unique(EV$Year))))),
+                  box(column(width= 6, offset = 1,radioButtons("Top5_EVtype","EV Type",choices = c("PHEV","BEV","PHEV & BEV")))),
+                  box(width=12,collapsible=TRUE,uiOutput(outputId = "UIout9"))
+                  ))
       )))
   
 )  
