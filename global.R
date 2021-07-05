@@ -69,3 +69,6 @@ NY_County_map <- ggplot(data = ny_df, mapping = aes(x = long, y = lat, group = g
     axis.title = element_blank()
   )
 
+
+
+

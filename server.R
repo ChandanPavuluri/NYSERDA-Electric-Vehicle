@@ -64,6 +64,13 @@ server <- function(input, output) {
     group_by(EV.Type)%>%
     summarise(Rebate = sum(Rebate_Amount))})
   
+  Model_Rebate_df <- reactive({EV%>%
+      filter(Year == input$RA_Year, Make== input$RA_Brand)%>%
+      group_by(EV.Type,Model)%>%
+      summarise(Rebate = sum(Rebate_Amount))
+    
+  })
+  
   # Creating barplot for brands and year
   output$barplot <- renderPlot({
     barplot <- ggplot(data = brands_df() ) + geom_bar(mapping = aes(x = Model, fill = Transaction.Type), position = "dodge")+
@@ -153,6 +160,14 @@ server <- function(input, output) {
     labs(fill="EV_Type")+
     theme_void()})
   
+  output$Piechart_Rebate_Model <- renderPlot({ggplot(Model_Rebate_df(), aes(x="", y=Rebate, fill= Model)) + geom_bar(stat="identity",position = "stack")+ coord_polar(theta = "y")+ 
+      geom_text(aes(label = paste0("$",Rebate)), position = position_stack(vjust = 0.5))+
+      ggtitle(paste("Total Rebate Amount of",input$RA_Year,"Cars for the Year",input$RA_Brand))+
+      theme(plot.title = element_text(hjust = 0.5))+
+      labs(fill="Model")+
+      theme_void()
+  })
+  
   output$UIout1 <- renderUI({
     if(nrow(brands_df()) == 0){
       p(strong(paste("No"),input$Brand, paste("Cars for the year"),input$Year))
@@ -203,6 +218,15 @@ server <- function(input, output) {
       p(strong(paste("No"),input$RA_Brand, paste("Cars for the year"),input$RA_Year))
     } else {
       plotOutput("Piechart_Rebate")
+    }
+    
+  })
+  
+  output$UIout8 <- renderUI({
+    if(nrow(Model_Rebate_df()) == 0){
+      p(strong(paste("No"),input$RA_Brand, paste("Cars for the year"),input$RA_Year))
+    } else {
+      plotOutput("Piechart_Rebate_Model")
     }
     
   })
