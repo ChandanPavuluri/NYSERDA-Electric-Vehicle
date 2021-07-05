@@ -98,7 +98,9 @@ server <- function(input, output) {
       labs(x= paste(input$Brand,input$Year),y="Total Count",fill="OwnerShip")+
       ggtitle(paste(input$Brand,"Models and EV Type","For The",input$Year))+
       theme(plot.title = element_text(hjust = 0.5))+
-      theme(axis.text.x =element_text(angle =45,hjust = 1))
+      theme(axis.text.x =element_text(angle =45,hjust = 1))+
+      theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+            panel.background = element_blank(), axis.line = element_line(colour = "black"))
     #barplot <- ggplotly(barplot)
     barplot
   })
@@ -171,7 +173,8 @@ server <- function(input, output) {
       guide=guide_colorbar(barwidth = 2,barheight = 10))+
     ggtitle(paste("NY County Wise",input$County_R_Brand,"Cars Total Rebate Amount For The Year",input$County_R_Year))+
     theme(plot.title = element_text(hjust = 0.5))+
-    labs(fill = "USD")})
+    labs(fill = "USD")
+  })
   
   output$Piechart_Rebate<- renderPlot({ggplot(Brand_Rebate_df(), aes(x="", y=Rebate, fill= EV.Type)) + geom_bar(stat="identity", width=1)+ coord_polar(theta = "y")+ 
     geom_text(aes(label = paste0("$",Rebate)), position = position_stack(vjust = 0.5))+
@@ -189,24 +192,33 @@ server <- function(input, output) {
   Rebate_pie
   })
   
-  output$Top5_barchart <- renderPlot({ if(input$Top5_EVtype == "PHEV & BEV"){
-    ggplot(Top5_PBEV_df(), aes(x = reorder(Name,Total), y=Total,fill=EV.Type)) +
+  output$Top5_barchart <- renderPlotly({ if(input$Top5_EVtype == "PHEV & BEV"){
+    H_bar <- ggplot(Top5_PBEV_df(), aes(x = reorder(Name,Total), y=Total,fill=EV.Type)) +
       geom_bar(stat='identity') +
       coord_flip()+
-      labs(x="Cars",y="Count")
+      labs(x="Cars",y="Count")+
+      theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+            panel.background = element_blank(), axis.line = element_line(colour = "black"))
     
   } else if (input$Top5_EVtype == "PHEV") {
-    ggplot(Top5_df(), aes(x = reorder(Name,Total), y=Total)) +
+    H_bar <- ggplot(Top5_df(), aes(x = reorder(Name,Total), y=Total)) +
       geom_bar(stat='identity',fill="#00BFC4") +
       coord_flip()+
-      labs(x="Cars",y="Count")
+      labs(x="Cars",y="Count")+
+      theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+            panel.background = element_blank(), axis.line = element_line(colour = "black"))
   }
     else {
-      ggplot(Top5_df(), aes(x = reorder(Name,Total), y=Total)) +
+      H_bar <- ggplot(Top5_df(), aes(x = reorder(Name,Total), y=Total)) +
         geom_bar(stat='identity',fill="#F8766D") +
         coord_flip()+
-        labs(x="Cars",y="Count")
+        labs(x="Cars",y="Count")+
+        theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+              panel.background = element_blank(), axis.line = element_line(colour = "black"))
     }
+    
+    H_bar <- ggplotly(H_bar)
+    H_bar
     
   })
   
@@ -274,7 +286,7 @@ server <- function(input, output) {
   })
   
   output$UIout9 <- renderUI({
-    plotOutput("Top5_barchart")
+    plotlyOutput("Top5_barchart")
   })
   
   
