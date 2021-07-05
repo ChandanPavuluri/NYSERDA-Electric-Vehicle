@@ -12,6 +12,7 @@ server <- function(input, output) {
       summarise(count =n())%>%
       mutate(prop = (count/sum(count))*100)})
   
+  
   CO2_df <- reactive({ EV %>%
       group_by(Make,Model,EV.Type,Year)%>%
       summarise(Emissions = sum(CO2))%>%
