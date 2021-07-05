@@ -15,7 +15,7 @@ ui <- fluidPage(
       tabItems(
         tabItem(tabName = "carmodels",
                 fluidRow(
-                  box(column(width=6,selectInput("Brand","Brand",choices=sort(unique(EV$Make))))),
+                  box(column(width=6,selectInput("Brand","Brand",choices=sort(unique(EV$Make)),selected = "Chevrolet"))),
                   box(column(width= 6, offset = 1,radioButtons("Year","Year",sort(unique(EV$Year))))),
                   box(width=6,collapsible=TRUE,uiOutput(outputId = "UIout2")),
                   box(width=6,collapsible=TRUE,uiOutput(outputId = "UIout1"))
@@ -34,19 +34,19 @@ ui <- fluidPage(
                 )),
         tabItem(tabName = "CarDenisty",
                 fluidRow(
-                  box(column(width=4,selectInput("Map_Brand","Brand",choices=sort(unique(EV$Make))))),
+                  box(column(width=4,selectInput("Map_Brand","Brand",choices=sort(unique(EV$Make)),selected = "Chevrolet"))),
                   box(column(width=4,offset = 1,radioButtons("Map_Year","Year",sort(unique(EV$Year))))),
                   box(width = 12,collapsible = TRUE, uiOutput(outputId = "UIout5"))
                 )),
         tabItem(tabName = "RebateCounty",
                 fluidRow(
-                  box(column(width=4,selectInput("County_R_Brand","Brand",choices=sort(unique(EV$Make))))),
+                  box(column(width=4,selectInput("County_R_Brand","Brand",choices=sort(unique(EV$Make)),selected = "Chevrolet"))),
                   box(column(width=4,offset = 1,radioButtons("County_R_Year","Year",sort(unique(EV$Year))))),
                   box(width = 12,collapsible = TRUE, uiOutput(outputId = "UIout6"))
                 )),
         tabItem(tabName = "RebateAmount",
                 fluidRow(
-                  box(column(width=6,selectInput("RA_Brand","Brand",choices=sort(unique(EV$Make))))),
+                  box(column(width=6,selectInput("RA_Brand","Brand",choices=sort(unique(EV$Make)),selected = "BMW"))),
                   box(column(width= 6, offset = 1,radioButtons("RA_Year","Year",sort(unique(EV$Year))))),
                   box(width=6,collapsible=TRUE,uiOutput(outputId = "UIout7")),
                   box(width=6,collapsible=TRUE,uiOutput(outputId = "UIout8"))

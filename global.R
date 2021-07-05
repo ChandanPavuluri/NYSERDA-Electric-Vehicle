@@ -48,6 +48,7 @@ colnames(EV)[8] <- "CO2"
 colnames(EV)[9] <- "Petrol"
 colnames(EV)[10] <- "Rebate_Amount"
 
+
 # Loading the New york County wise Map data
 states <- map_data("state")
 ny_df <- subset(states, region == "new york")
