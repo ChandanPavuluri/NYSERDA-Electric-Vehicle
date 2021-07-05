@@ -160,12 +160,13 @@ server <- function(input, output) {
     labs(fill="EV_Type")+
     theme_void()})
   
-  output$Piechart_Rebate_Model <- renderPlot({ggplot(Model_Rebate_df(), aes(x="", y=Rebate, fill= Model)) + geom_bar(stat="identity",position = "stack")+ coord_polar(theta = "y")+ 
-      geom_text(aes(label = paste0("$",Rebate)), position = position_stack(vjust = 0.5))+
-      ggtitle(paste("Total Rebate Amount of",input$RA_Year,"Cars for the Year",input$RA_Brand))+
-      theme(plot.title = element_text(hjust = 0.5))+
-      labs(fill="Model")+
-      theme_void()
+  output$Piechart_Rebate_Model <- renderPlot({Rebate_pie <- ggplot(Model_Rebate_df(), aes(x="", y=Rebate, fill= Model)) + geom_bar(stat="identity",position = "stack")+ coord_polar(theta = "y")+ 
+    geom_text(aes(label = paste0("$",Rebate)), position = position_stack(vjust = 0.5))+
+    ggtitle(paste("Total Rebate Amount of",input$RA_Year,"Cars for the Year",input$RA_Brand))+
+    theme(plot.title = element_text(hjust = 0.5))+
+    labs(fill="Model")+
+    theme_void()
+  Rebate_pie
   })
   
   output$UIout1 <- renderUI({
